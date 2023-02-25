@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  api:
+    container_name: "flask_api"
+    image: "python:3.11.2-bullseye"
+    ports:
+      - "5000:5000"
+    volumes:
+      - "./mre:/mre"
+    working_dir: /mre
+    command: >
+      bash -c "pip install -r requirements.txt &&
+      python server.py"
