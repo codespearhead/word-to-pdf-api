@@ -4,7 +4,6 @@ mre/*.pdf
 mre/*.doc
 mre/*.docx
 !mre/dummy_doc.docx
-client2.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
