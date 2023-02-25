@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://paguiar.link/baileys-quickstart">Doc to PDF API</a></h1>
+<h1 align="center"><a href="https://github.com/Paguiar735/doc-to-file-api">Doc to PDF API</a></h1>
 
 <p align="center">
     <br>
@@ -6,7 +6,7 @@
     <img src="https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_960_720.png" width="120px" height="120px"/>
   </a>
   <br><br>
-  Simple Flask API to convert DOC(X) to PDF
+  Simple Flask API to convert DOC(X) files to PDF
   <br>
 </p>
 
@@ -14,16 +14,25 @@
 
 ## QuickStart
 
-Install Docker and Docker Compose on your machine, and run the following command inside the project directory:
+> **Note**: You'll need to have the latest version of [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed on your machine
 
-```sh
+1. Clone the repository and cd into it:
+
+```
+git clone https://github.com/Paguiar735/doc-to-file-api
+cd doc-to-file-api
+```
+
+2. Spin up the API 
+
+> **Note**: The container will take a while to boot because "libreoffice" is a rather large dependency. Luckily, Flask's built-in web server will auto-reload the Flask app changes are made to the server.py and saved, since the Flask app's running in debug mode.
+
+```
 docker compose up
 ```
 
-Docker compose will take a while to boot because "libreoffice" is a rather large dependency.
+3. Check if the API is working by sending a dummy DOCX file to it and seeing whether a file named "output.pdf" has been created in the project's root directory:
 
-Flask will autoreload every time you save mre/main.py
-
-```curl
+```
 python client.py
 ```
