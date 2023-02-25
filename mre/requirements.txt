@@ -1,2 +1,1 @@
 flask==2.2.3
-aspose-words==23.2.0

@@ -20,7 +20,7 @@ Install Docker and Docker Compose on your machine, and run the following command
 docker compose up
 ```
 
-Docker compose will take a while to boot because "aspose_words" is a rather large dependency.
+Docker compose will take a while to boot because "libreoffice" is a rather large dependency.
 
 Flask will autoreload every time you save mre/main.py
 

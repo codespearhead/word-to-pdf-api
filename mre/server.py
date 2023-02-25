@@ -1,12 +1,7 @@
 from os import remove
 from random import randint
-
-import aspose.words as aw
+from subprocess import check_output
 from flask import Flask, request, jsonify, send_file
-
-def docx_to_pdf(path_to_docx_file, filename_output="output.pdf"):
-    doc = aw.Document(path_to_docx_file)
-    doc.save(filename_output)
 
 app = Flask(__name__)
 
@@ -29,7 +24,7 @@ def upload_file():
     if file and request.method == 'POST':
         try:
             file.save(filename["docx"])
-            docx_to_pdf(filename["docx"], filename["pdf"])
+            check_output(['libreoffice', '--headless', '--convert-to', 'pdf' , filename["docx"]])
             return send_file(filename["pdf"], download_name=filename["pdf"])
         except Exception as e:
             return str(e)
