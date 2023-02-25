@@ -14,7 +14,7 @@
 
 ## QuickStart
 
-> **Note**: You'll need to have the latest version of [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed on your machine
+> **Note**: You'll need to have the latest version of the [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed on your machine
 
 1. Clone the repository and cd into it:
 
@@ -25,7 +25,7 @@ cd doc-to-file-api
 
 2. Spin up the API 
 
-> **Note**: The container will take a while to boot because "libreoffice" is a rather large dependency. Luckily, Flask's built-in web server will auto-reload the Flask app changes are made to the server.py and saved, since the Flask app's running in debug mode.
+> **Note**: The container will take a while to boot because "libreoffice" is a rather large dependency. Luckily, Flask's built-in web server will auto-reload the Flask app once changes are made to the server.py and saved, since the Flask app's running in debug mode.
 
 ```
 docker compose up
