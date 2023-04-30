@@ -19,7 +19,7 @@
 1. Clone the repository and cd into it:
 
 ```
-git clone https://github.com/Paguiar735/doc-to-file-api
+git clone https://github.com/codespearhead/doc-to-file-api
 cd doc-to-file-api
 ```
 
