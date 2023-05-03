@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://github.com/Paguiar735/doc-to-file-api">Doc to PDF API</a></h1>
+<h1 align="center"><a href="https://github.com/codespearhead/word-to-pdf-api">Doc to PDF API</a></h1>
 
 <p align="center">
     <br>
