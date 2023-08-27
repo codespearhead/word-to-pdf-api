@@ -31,7 +31,11 @@ cd doc-to-file-api
 docker compose up
 ```
 
-3. Check if the API is working by sending a dummy DOCX file to it and seeing whether a file named "output.pdf" has been created in the project's root directory:
+3.A Go to `https://localhost:5000/doc_to_pdf`, select a file locally and press `upload` 
+
+or 
+
+3.B  Check if the API is working by sending a dummy DOCX file to it and seeing whether a file named "output.pdf" has been created in the project's root directory:
 
 ```
 python client.py

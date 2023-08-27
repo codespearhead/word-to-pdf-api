@@ -5,8 +5,19 @@ from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
 
-@app.route('/doc_to_pdf', methods = ['POST'])
+@app.route('/doc_to_pdf', methods = ['GET','POST'])
 def upload_file():
+    if request.method == 'GET':
+        return '''
+        <!doctype html>
+        <title>Upload new File</title>
+        <h1>Upload new File</h1>
+        <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+
     filename = randint(0,1000)
     filename = {
         'docx': f'{filename}.docx',
