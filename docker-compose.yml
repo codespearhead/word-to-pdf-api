@@ -2,15 +2,8 @@ version: "3.9"
 services:
   api:
     container_name: "flask_api"
-    image: "python:3.11.2-bullseye"
+    build: .
     ports:
-      - "5000:5000"
-    volumes:
-      - "./mre:/mre"
-    working_dir: /mre
+      - ${PORT:-5000}:5000
     command: >
-      bash -c "apt-get update &&
-      apt-get --no-install-recommends install libreoffice -y &&
-      apt-get install -y libreoffice-java-common default-jre &&
-      pip install -r requirements.txt &&
-      python server.py"
+      bash -c "python server.py"
