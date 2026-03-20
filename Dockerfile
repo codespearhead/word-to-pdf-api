@@ -15,13 +15,8 @@ RUN pip install poetry
 
 FROM python_with_libreoffice_and_poetry AS python_with_libreoffice_and_project_dependencies
 
-WORKDIR /usr/local/workdir
+WORKDIR /app
 COPY pyproject.toml pyproject.toml
 COPY poetry.lock poetry.lock
 RUN poetry config virtualenvs.create false
 RUN poetry install --no-root
-
-
-FROM python_with_libreoffice_and_project_dependencies AS python_with_libreoffice_and_project_dependencies_and_project_files
-
-COPY mre/server.py ./server.py
