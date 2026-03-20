@@ -1,5 +1,4 @@
 #Repository-specific
-output.pdf
 mre/*.pdf
 mre/*.doc
 mre/*.docx
