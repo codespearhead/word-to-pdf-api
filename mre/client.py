@@ -1,7 +1,7 @@
 import requests
 
 endpoint = "http://localhost:5000/doc_to_pdf"
-path_to_doc = './mre/dummy_doc.docx'
+path_to_doc = './dummy_doc.docx'
 chunk_size = 2000
 
 r = requests.post(endpoint, files={
