@@ -8,10 +8,19 @@ RUN apt-get update && \
     apt-get install -y libreoffice-java-common default-jre
 
 
-FROM python_with_libreoffice AS python_with_libreoffice_and_project_dependencies
+FROM python_with_libreoffice AS python_with_libreoffice_and_poetry
 
-COPY mre/requirements.txt ./mre/requirements.txt
-RUN pip install -r ./mre/requirements.txt
+RUN pip install poetry
+
+
+FROM python_with_libreoffice_and_poetry AS python_with_libreoffice_and_project_dependencies
+
+WORKDIR /usr/local/workdir
+COPY pyproject.toml pyproject.toml
+COPY poetry.lock poetry.lock
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-root
+
 
 FROM python_with_libreoffice_and_project_dependencies AS python_with_libreoffice_and_project_dependencies_and_project_files
 
