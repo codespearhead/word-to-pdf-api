@@ -1,4 +1,4 @@
-FROM python:3.12.0-bullseye
+FROM python:3.14.3-trixie
 ADD mre /usr/local/mre
 WORKDIR /usr/local/mre
 RUN apt-get update && \
