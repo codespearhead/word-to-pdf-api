@@ -85,11 +85,6 @@ jobs:
             exit 1
           fi
 
-      - name: Fetch dependencies
-        run: |
-          source .venv/bin/activate
-          poetry lock
-
       - name: Install dependencies
         run: |
           source .venv/bin/activate
