@@ -10,3 +10,9 @@ services:
     command: python ./src/server.py
     volumes:
       - ./:/app:rw
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 5s

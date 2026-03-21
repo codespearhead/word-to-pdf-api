@@ -7,6 +7,11 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 @app.route("/doc_to_pdf", methods=["GET", "POST"])
 def upload_file():
     if request.method == "GET":
