@@ -14,6 +14,7 @@ from pypdfium2._helpers.bitmap import PdfBitmap
 
 
 base_dir = os.path.dirname(__file__)
+endpoint = "http://127.0.0.1:5000/doc_to_pdf"
 
 
 @pytest.fixture(scope="function")
@@ -26,11 +27,11 @@ def temp_dir(request: FixtureRequest) -> Generator[str, None, None]:
     yield path
 
 
-endpoint = "http://localhost:5000/doc_to_pdf"
-
-
 def render_pdf_pages(
-    pdf_path: str, prefix: str, temp_dir: str, scale: int = 2
+    pdf_path: str,
+    prefix: str,
+    temp_dir: str,
+    scale: int = 2,
 ) -> List[Tuple[Image.Image, str]]:
     pdf = pdfium.PdfDocument(pdf_path)
     pages: List[Tuple[Image.Image, str]] = []
@@ -46,6 +47,51 @@ def render_pdf_pages(
         pages.append((image, output_path))
 
     return pages
+
+
+def assert_generated_pdf_matches_expected(
+    actual_pdf_path: str,
+    expected_pdf_path: str,
+    temp_dir: str,
+) -> None:
+    expected_pages = render_pdf_pages(
+        prefix="expected",
+        pdf_path=expected_pdf_path,
+        temp_dir=temp_dir,
+    )
+    actual_pages = render_pdf_pages(
+        prefix="actual",
+        pdf_path=actual_pdf_path,
+        temp_dir=temp_dir,
+    )
+
+    assert len(actual_pages) == len(expected_pages), (
+        f"Page count mismatch: actual={len(actual_pages)}, expected={len(expected_pages)}; "
+        f"actual_pdf={actual_pdf_path}; expected_pdf={expected_pdf_path}"
+    )
+
+    for (actual_image, actual_image_path), (expected_image, expected_image_path) in zip(
+        actual_pages,
+        expected_pages,
+    ):
+        actual_name = Path(actual_image_path).name
+        expected_name = Path(expected_image_path).name
+
+        actual_bytes = actual_image.tobytes()
+        expected_bytes = expected_image.tobytes()
+
+        if actual_bytes != expected_bytes:
+            raise AssertionError(
+                f"Rendered page differs from expected output; "
+                f"actual_image={actual_name}; expected_image={expected_name}; "
+            )
+
+
+def save_response_pdf(response: requests.Response, output_path: str) -> None:
+    with open(output_path, "wb") as f:
+        chunk_size = 2000
+        for chunk in response.iter_content(chunk_size):
+            f.write(chunk)
 
 
 def test__missing_file_in_request():
@@ -89,46 +135,17 @@ def test__pdf_generated_successfully(temp_dir: str):
     actual_file = os.path.join(temp_dir, "output.pdf")
 
     with open(input_file, "rb") as f:
-        response = requests.post(endpoint, files={"file": f})
+        response = requests.post(endpoint, files={"file": f}, stream=True)
 
     assert response.status_code == 200
 
     content_type = response.headers.get("content-type", "")
     assert "application/pdf" in content_type
 
-    with open(actual_file, "wb") as f:
-        chunk_size = 2000
-        for chunk in response.iter_content(chunk_size):
-            f.write(chunk)
+    save_response_pdf(response, actual_file)
 
-    expected_pages = render_pdf_pages(
-        prefix="expected",
-        pdf_path=expected_file,
+    assert_generated_pdf_matches_expected(
+        actual_pdf_path=actual_file,
+        expected_pdf_path=expected_file,
         temp_dir=temp_dir,
     )
-    actual_pages = render_pdf_pages(
-        prefix="actual",
-        pdf_path=actual_file,
-        temp_dir=temp_dir,
-    )
-
-    assert len(actual_pages) == len(expected_pages), (
-        f"Page count mismatch: actual={len(actual_pages)}, expected={len(expected_pages)}; "
-        f"actual_pdf={actual_file}; expected_pdf={expected_file}"
-    )
-
-    for (actual_image, actual_image_path), (expected_image, expected_image_path) in zip(
-        actual_pages,
-        expected_pages,
-    ):
-        actual_name = Path(actual_image_path).name
-        expected_name = Path(expected_image_path).name
-
-        actual_bytes = actual_image.tobytes()
-        expected_bytes = expected_image.tobytes()
-
-        if actual_bytes != expected_bytes:
-            raise AssertionError(
-                f"Rendered page differs from expected output; "
-                f"actual_image={actual_name}; expected_image={expected_name}; "
-            )
