@@ -47,7 +47,7 @@ def render_pdf_pages(
     return pages
 
 
-def test_doc_to_pdf_success(temp_dir: str):
+def test__pdf_generated_successfully(temp_dir: str):
     input_file = os.path.join(base_dir, "dummy_doc.docx")
     expected_file = os.path.join(base_dir, "dummy_doc.pdf")
     actual_file = os.path.join(temp_dir, "output.pdf")
