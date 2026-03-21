@@ -40,3 +40,9 @@ docker compose up
 ```
 docker exec -it flask_api python client.py
 ```
+
+3.3. (Automated testing)
+
+```bash
+docker exec -it flask_api poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./mre/
+```

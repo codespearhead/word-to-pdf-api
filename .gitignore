@@ -1,4 +1,5 @@
 #Repository-specific
+mre/test_output/
 mre/*.pdf
 mre/*.doc
 mre/*.docx
