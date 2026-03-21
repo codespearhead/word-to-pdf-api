@@ -1,11 +1,10 @@
-from os import remove
-from os.path import abspath, dirname, join
+import os
 from random import randint
 from subprocess import check_output
 from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
-BASE_DIR = dirname(abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @app.route("/doc_to_pdf", methods=["GET", "POST"])
@@ -23,8 +22,8 @@ def upload_file():
 
     filename = randint(0, 1000)
     filename = {
-        "docx": join(BASE_DIR, f"{filename}.docx"),
-        "pdf": join(BASE_DIR, f"{filename}.pdf"),
+        "docx": os.path.join(BASE_DIR, f"{filename}.docx"),
+        "pdf": os.path.join(BASE_DIR, f"{filename}.pdf"),
     }
     if "file" not in request.files:
         resp = jsonify({"message": "No file part in the request"})
@@ -54,7 +53,7 @@ def upload_file():
             return str(e)
         finally:
             for key in filename:
-                remove(filename[key])
+                os.path.remove(filename[key])
 
 
 if __name__ == "__main__":
