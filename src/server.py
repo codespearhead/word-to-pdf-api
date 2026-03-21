@@ -32,7 +32,7 @@ def upload_file():
         return resp
     file = request.files["file"]
     if file.filename == "":
-        resp = resp = jsonify({"message": "No file selected for uploading"})
+        resp = jsonify({"message": "No file selected for uploading"})
         resp.status_code = 400
         return resp
     if file and request.method == "POST":
