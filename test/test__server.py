@@ -94,7 +94,7 @@ def save_response_pdf(response: requests.Response, output_path: str) -> None:
             f.write(chunk)
 
 
-def test__missing_file_in_request():
+def test__api__missing_file_in_request():
     response = requests.post(endpoint)
 
     assert response.status_code == 400
@@ -106,7 +106,7 @@ def test__missing_file_in_request():
     assert data.get("message") == "No file part in the request"
 
 
-def test__invalid_file_in_request(temp_dir: str):
+def test__api__invalid_file_in_request(temp_dir: str):
     invalid_file = os.path.join(temp_dir, "invalid.docx")
 
     # [09301be5-a035-4d7f-82f3-f4502070da58] DOCX files are ZIP archives with a specific structure. This creates a fake DOCX (valid ZIP but missing required files), which reliably triggers a conversion failure.
@@ -129,7 +129,7 @@ def test__invalid_file_in_request(temp_dir: str):
     }
 
 
-def test__pdf_generated_successfully(temp_dir: str):
+def test__api__pdf_generated_successfully(temp_dir: str):
     input_file = os.path.join(base_dir, "dummy_doc.docx")
     expected_file = os.path.join(base_dir, "dummy_doc.pdf")
     actual_file = os.path.join(temp_dir, "output.pdf")
