@@ -12,12 +12,21 @@ def upload_file():
     if request.method == "GET":
         return """
         <!doctype html>
-        <title>Upload new File</title>
-        <h1>Upload new File</h1>
-        <form method=post enctype=multipart/form-data>
-        <input type=file name=file>
-        <input type=submit value=Upload>
-        </form>
+        <head>
+            <meta charset="utf-8">
+            <title>Convert Microsoft Word (DOC/DOCX) to PDF</title>
+        </head>
+        <body>
+            <h1>Upload new File</h1>
+
+            <form id="upload-form" method="post" enctype="multipart/form-data">
+                <label for="file_input">Choose a file:</label>
+                <input id="file_input" type="file" name="file" required>
+
+                <button id="submit_form" type="submit">Upload</button>
+            </form>
+        </body>
+        </html>
         """
 
     if "file" not in request.files:
