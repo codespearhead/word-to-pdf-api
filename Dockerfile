@@ -3,7 +3,9 @@ FROM python:3.14.3-trixie AS python
 
 FROM python AS python_with_libreoffice
 
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update && \
     apt-get --no-install-recommends install libreoffice -y && \
     apt-get install -y libreoffice-java-common default-jre
 
