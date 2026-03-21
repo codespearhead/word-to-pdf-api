@@ -6,7 +6,7 @@
     <img src="https://cdn.pixabay.com/photo/2020/03/10/17/02/pdf-4919559_960_720.png" width="120px" height="120px"/>
   </a>
   <br><br>
-    Simple Flask API to convert Microsoft Word files (DOC/DOCX) to PDF
+    Seamlessly convert Microsoft Word documents (.DOC/.DOCX) to PDF programmatically via a REST API
   <br>
 </p>
 
