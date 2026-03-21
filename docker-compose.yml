@@ -1,6 +1,9 @@
 services:
   api:
     container_name: "flask_api"
+    environment:
+      POETRY_VIRTUALENVS_CREATE: "false"
+      POETRY_VIRTUALENVS_IN_PROJECT: "false"
     build: .
     ports:
       - ${PORT:-5000}:5000
