@@ -47,6 +47,18 @@ def render_pdf_pages(
     return pages
 
 
+def test__missing_file_in_request():
+    response = requests.post(endpoint)
+
+    assert response.status_code == 400
+
+    content_type = response.headers.get("content-type", "")
+    assert "application/json" in content_type
+
+    data = response.json()
+    assert data.get("message") == "No file part in the request"
+
+
 def test__pdf_generated_successfully(temp_dir: str):
     input_file = os.path.join(base_dir, "dummy_doc.docx")
     expected_file = os.path.join(base_dir, "dummy_doc.pdf")
