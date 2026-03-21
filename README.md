@@ -36,6 +36,9 @@ docker compose up
 3.1. (Automated testing)
 
 ```bash
+# 3.1.1 - Install test dependencies
+docker exec -it flask_api poetry install --with test
+# 3.1.2 - Run test suite
 docker exec -it flask_api poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test
 ```
 
