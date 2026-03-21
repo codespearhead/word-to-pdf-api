@@ -4,7 +4,6 @@ services:
     build: .
     ports:
       - ${PORT:-5000}:5000
-    working_dir: /app/mre
-    command: python server.py
+    command: python ./src/server.py
     volumes:
       - ./:/app:rw

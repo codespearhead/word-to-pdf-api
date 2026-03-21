@@ -1,9 +1,11 @@
 from os import remove
+from os.path import abspath, dirname, join
 from random import randint
 from subprocess import check_output
 from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
+BASE_DIR = dirname(abspath(__file__))
 
 @app.route('/doc_to_pdf', methods = ['GET','POST'])
 def upload_file():
@@ -20,8 +22,8 @@ def upload_file():
 
     filename = randint(0,1000)
     filename = {
-        'docx': f'{filename}.docx',
-        'pdf': f'{filename}.pdf'
+        'docx': join(BASE_DIR, f'{filename}.docx'),
+        'pdf': join(BASE_DIR, f'{filename}.pdf')
     }
     if 'file' not in request.files:
         resp = jsonify({'message' : 'No file part in the request'})
@@ -35,7 +37,7 @@ def upload_file():
     if file and request.method == 'POST':
         try:
             file.save(filename["docx"])
-            check_output(['libreoffice', '--headless', '--convert-to', 'pdf' , filename["docx"]])
+            check_output(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', BASE_DIR, filename["docx"]])
             return send_file(filename["pdf"], download_name=filename["pdf"])
         except Exception as e:
             return str(e)
