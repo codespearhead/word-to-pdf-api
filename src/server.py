@@ -1,5 +1,5 @@
 import os
-from random import randint
+from tempfile import NamedTemporaryFile
 from subprocess import check_output
 from flask import Flask, request, jsonify, send_file
 
@@ -20,40 +20,46 @@ def upload_file():
         </form>
         """
 
-    filename = randint(0, 1000)
-    filename = {
-        "docx": os.path.join(BASE_DIR, f"{filename}.docx"),
-        "pdf": os.path.join(BASE_DIR, f"{filename}.pdf"),
-    }
     if "file" not in request.files:
-        resp = jsonify({"message": "No file part in the request"})
-        resp.status_code = 400
-        return resp
+        return jsonify({"message": "No file part in the request"}), 400
+
     file = request.files["file"]
     if file.filename == "":
-        resp = jsonify({"message": "No file selected for uploading"})
-        resp.status_code = 400
-        return resp
-    if file and request.method == "POST":
-        try:
-            file.save(filename["docx"])
-            check_output(
-                [
-                    "libreoffice",
-                    "--headless",
-                    "--convert-to",
-                    "pdf",
-                    "--outdir",
-                    BASE_DIR,
-                    filename["docx"],
-                ]
-            )
-            return send_file(filename["pdf"], download_name=filename["pdf"])
-        except Exception as e:
-            return str(e)
-        finally:
-            for key in filename:
-                os.path.remove(filename[key])
+        return jsonify({"message": "No file selected for uploading"}), 400
+
+    docx_file = NamedTemporaryFile(delete=False, suffix=".docx", dir=BASE_DIR)
+    pdf_path = f"{docx_file.name[:-5]}.pdf"
+
+    try:
+        file.save(docx_file.name)
+        docx_file.close()
+
+        check_output(
+            [
+                "libreoffice",
+                "--headless",
+                "--convert-to",
+                "pdf",
+                "--outdir",
+                BASE_DIR,
+                docx_file.name,
+            ],
+        )
+
+        return send_file(
+            pdf_path,
+            download_name=os.path.basename(pdf_path),
+            as_attachment=True,
+        )
+
+    except Exception as e:
+        return str(e)
+
+    finally:
+        if os.path.exists(docx_file.name):
+            os.remove(docx_file.name)
+        if os.path.exists(pdf_path):
+            os.remove(pdf_path)
 
 
 if __name__ == "__main__":
