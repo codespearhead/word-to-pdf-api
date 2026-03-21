@@ -15,8 +15,10 @@ RUN pip install poetry
 
 FROM python_with_libreoffice_and_poetry AS python_with_libreoffice_and_project_dependencies
 
+ENV POETRY_VIRTUALENVS_CREATE=false
+ENV POETRY_VIRTUALENVS_IN_PROJECT=false
+
 WORKDIR /app
 COPY pyproject.toml pyproject.toml
 COPY poetry.lock poetry.lock
-RUN poetry config virtualenvs.create false
 RUN poetry install --only main --no-root
