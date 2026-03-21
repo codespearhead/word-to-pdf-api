@@ -1,5 +1,6 @@
 services:
   api:
+    image: flask_api:ci
     container_name: "flask_api"
     environment:
       POETRY_VIRTUALENVS_CREATE: "false"
