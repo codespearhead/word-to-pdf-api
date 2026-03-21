@@ -39,4 +39,4 @@ docker compose up
 docker exec -it flask_api poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test
 ```
 
-3.2. (UI) Go to [http://localhost:5000/doc_to_pdf](http://localhost:5000/doc_to_pdf), select a local DOC or DOCX file, such as the one in ./mre/dummy_doc.docx, then press `upload` and see whether a PDF file is either displayed on the browser or downloaded automatically.
+3.2. (UI) Go to [http://localhost:5000/doc_to_pdf](http://localhost:5000/doc_to_pdf), select a local DOC or DOCX file, such as the one in ./test/dummy_doc.docx, then press `upload` and see whether a PDF file is either displayed on the browser or downloaded automatically.
