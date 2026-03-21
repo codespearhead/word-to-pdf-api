@@ -12,7 +12,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 FROM python_with_libreoffice AS python_with_libreoffice_and_poetry
 
-RUN pip install poetry
+RUN --mount=type=cache,target=/root/.cache/pypoetry \
+    --mount=type=cache,target=/root/.cache/pip \
+    pip install poetry
 
 
 FROM python_with_libreoffice_and_poetry AS python_with_libreoffice_and_project_dependencies
@@ -23,4 +25,6 @@ ENV POETRY_VIRTUALENVS_IN_PROJECT=false
 WORKDIR /app
 COPY pyproject.toml pyproject.toml
 COPY poetry.lock poetry.lock
-RUN poetry install --only main --no-root
+RUN --mount=type=cache,target=/root/.cache/pypoetry \
+    --mount=type=cache,target=/root/.cache/pip \
+    poetry install --only main --no-root
