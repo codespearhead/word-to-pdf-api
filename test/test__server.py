@@ -20,7 +20,9 @@ os.makedirs(temp_dir)
 endpoint = "http://localhost:5000/doc_to_pdf"
 
 
-def render_pdf_pages(pdf_path: str, prefix: str, scale: int = 2) -> List[Tuple[Image.Image, str]]:
+def render_pdf_pages(
+    pdf_path: str, prefix: str, scale: int = 2
+) -> List[Tuple[Image.Image, str]]:
     pdf = pdfium.PdfDocument(pdf_path)
     pages: List[Tuple[Image.Image, str]] = []
 

@@ -7,10 +7,11 @@ from flask import Flask, request, jsonify, send_file
 app = Flask(__name__)
 BASE_DIR = dirname(abspath(__file__))
 
-@app.route('/doc_to_pdf', methods = ['GET','POST'])
+
+@app.route("/doc_to_pdf", methods=["GET", "POST"])
 def upload_file():
-    if request.method == 'GET':
-        return '''
+    if request.method == "GET":
+        return """
         <!doctype html>
         <title>Upload new File</title>
         <h1>Upload new File</h1>
@@ -18,31 +19,43 @@ def upload_file():
         <input type=file name=file>
         <input type=submit value=Upload>
         </form>
-        '''
+        """
 
-    filename = randint(0,1000)
+    filename = randint(0, 1000)
     filename = {
-        'docx': join(BASE_DIR, f'{filename}.docx'),
-        'pdf': join(BASE_DIR, f'{filename}.pdf')
+        "docx": join(BASE_DIR, f"{filename}.docx"),
+        "pdf": join(BASE_DIR, f"{filename}.pdf"),
     }
-    if 'file' not in request.files:
-        resp = jsonify({'message' : 'No file part in the request'})
+    if "file" not in request.files:
+        resp = jsonify({"message": "No file part in the request"})
         resp.status_code = 400
         return resp
-    file = request.files['file']
-    if file.filename == '':
-        resp = resp = jsonify({'message' : 'No file selected for uploading'})
+    file = request.files["file"]
+    if file.filename == "":
+        resp = resp = jsonify({"message": "No file selected for uploading"})
         resp.status_code = 400
         return resp
-    if file and request.method == 'POST':
+    if file and request.method == "POST":
         try:
             file.save(filename["docx"])
-            check_output(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', BASE_DIR, filename["docx"]])
+            check_output(
+                [
+                    "libreoffice",
+                    "--headless",
+                    "--convert-to",
+                    "pdf",
+                    "--outdir",
+                    BASE_DIR,
+                    filename["docx"],
+                ]
+            )
             return send_file(filename["pdf"], download_name=filename["pdf"])
         except Exception as e:
             return str(e)
         finally:
-            for key in filename: remove(filename[key])
+            for key in filename:
+                remove(filename[key])
 
-if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=5000, debug=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
