@@ -3,6 +3,9 @@ from pathlib import Path
 import shutil
 from typing import List
 from typing import Tuple
+from typing import Generator
+import pytest
+from _pytest.fixtures import FixtureRequest
 import pypdfium2 as pdfium
 import requests
 from PIL import Image
@@ -10,18 +13,23 @@ from pypdfium2._helpers.bitmap import PdfBitmap
 
 
 base_dir = os.path.dirname(__file__)
-temp_dir = os.path.join(base_dir, "test_output")
-if os.path.exists(temp_dir):
-    shutil.rmtree(temp_dir)
 
-os.makedirs(temp_dir)
+
+@pytest.fixture(scope="function")
+def temp_dir(request: FixtureRequest) -> Generator[str, None, None]:
+    path = os.path.join(base_dir, "test_output", request.node.name)
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.makedirs(path)
+
+    yield path
 
 
 endpoint = "http://localhost:5000/doc_to_pdf"
 
 
 def render_pdf_pages(
-    pdf_path: str, prefix: str, scale: int = 2
+    pdf_path: str, prefix: str, temp_dir: str, scale: int = 2
 ) -> List[Tuple[Image.Image, str]]:
     pdf = pdfium.PdfDocument(pdf_path)
     pages: List[Tuple[Image.Image, str]] = []
@@ -39,7 +47,7 @@ def render_pdf_pages(
     return pages
 
 
-def test_doc_to_pdf():
+def test_doc_to_pdf_success(temp_dir: str):
     input_file = os.path.join(base_dir, "dummy_doc.docx")
     expected_file = os.path.join(base_dir, "dummy_doc.pdf")
     actual_file = os.path.join(temp_dir, "output.pdf")
@@ -57,8 +65,16 @@ def test_doc_to_pdf():
         for chunk in response.iter_content(chunk_size):
             f.write(chunk)
 
-    expected_pages = render_pdf_pages(expected_file, prefix="expected")
-    actual_pages = render_pdf_pages(actual_file, prefix="actual")
+    expected_pages = render_pdf_pages(
+        prefix="expected",
+        pdf_path=expected_file,
+        temp_dir=temp_dir,
+    )
+    actual_pages = render_pdf_pages(
+        prefix="actual",
+        pdf_path=actual_file,
+        temp_dir=temp_dir,
+    )
 
     assert len(actual_pages) == len(expected_pages), (
         f"Page count mismatch: actual={len(actual_pages)}, expected={len(expected_pages)}; "
