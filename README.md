@@ -48,7 +48,11 @@ docker exec -it flask_api poetry run pytest -rfsxE --capture=no --log-cli-level=
 
 TODO
 
+## Useful commands
+
+1. Format code:
+
 ```bash
 docker exec -it flask_api poetry install --with format
 docker exec -it flask_api poetry run python ./tasks/format.py
-```bash
+```
