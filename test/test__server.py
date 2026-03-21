@@ -51,7 +51,9 @@ def test_doc_to_pdf():
     assert "application/pdf" in content_type
 
     with open(actual_file, "wb") as f:
-        f.write(response.content)
+        chunk_size = 2000
+        for chunk in response.iter_content(chunk_size):
+            f.write(chunk)
 
     expected_pages = render_pdf_pages(expected_file, prefix="expected")
     actual_pages = render_pdf_pages(actual_file, prefix="actual")

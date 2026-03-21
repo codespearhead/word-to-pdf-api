@@ -1,9 +1,5 @@
 #Repository-specific
-mre/test_output/
-mre/*.pdf
-mre/*.doc
-mre/*.docx
-!mre/dummy_doc.docx
+test/test_output/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
