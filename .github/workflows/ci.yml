@@ -1,0 +1,85 @@
+name: Build Python Project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+env:
+  # PYTHON
+  PYTHON_VERSION: '3.14'
+  PIP_ROOT_USER_ACTION: ignore
+  # POETRY
+  POETRY_VERSION: '2.3.2'
+  # PYTHONPATH so absolute imports work
+  PYTHONPATH: .
+
+jobs:
+  build:
+    timeout-minutes: 3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache Poetry, pipx, and dependencies
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.local/pipx
+            ~/.cache/pypoetry
+            ~/.cache/pip
+          key: setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
+
+      - name: Ensure Poetry is available
+        run: |
+          python -m pip install --upgrade pip pipx
+          pipx install poetry==${POETRY_VERSION}
+          echo "$(pipx environment --value BIN_DIR)" >> $GITHUB_PATH
+
+      - name: Create virtual environment
+        run: python -m venv .venv
+
+      - name: Activate virtual environment and confirm it's active
+        run: |
+          source .venv/bin/activate
+          PYTHON_PATH=$(which python)
+          if [[ "$PYTHON_PATH" == *".venv"* ]]; then
+            echo "Python is using a .venv environment: $PYTHON_PATH"
+          else
+            echo "Python is NOT using a .venv environment: $PYTHON_PATH"
+            exit 1
+          fi
+
+      - name: Fetch dependencies
+        run: |
+          source .venv/bin/activate
+          poetry lock
+
+      - name: Install dependencies
+        run: |
+          source .venv/bin/activate
+          poetry install --no-root --with format
+
+      - name: Check for successful installation
+        run: |
+          source .venv/bin/activate
+          poetry check
+
+      - name: Format and lint project
+        run: |
+          source .venv/bin/activate
+          poetry run python tasks/format.py --dry-run
