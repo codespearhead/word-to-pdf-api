@@ -4,6 +4,7 @@ import shutil
 from typing import List
 from typing import Tuple
 from typing import Generator
+import zipfile
 import pytest
 from _pytest.fixtures import FixtureRequest
 import pypdfium2 as pdfium
@@ -57,6 +58,29 @@ def test__missing_file_in_request():
 
     data = response.json()
     assert data.get("message") == "No file part in the request"
+
+
+def test__invalid_file_in_request(temp_dir: str):
+    invalid_file = os.path.join(temp_dir, "invalid.docx")
+
+    # [09301be5-a035-4d7f-82f3-f4502070da58] DOCX files are ZIP archives with a specific structure. This creates a fake DOCX (valid ZIP but missing required files), which reliably triggers a conversion failure.
+    with zipfile.ZipFile(invalid_file, "w") as zf:
+        zf.writestr("[Content_Types].xml", "")
+        zf.writestr("_rels/.rels", "")
+
+    with open(invalid_file, "rb") as f:
+        response = requests.post(endpoint, files={"file": f})
+
+    assert response.status_code == 500
+
+    content_type = response.headers.get("content-type", "")
+    assert "application/json" in content_type
+
+    data = response.json()
+    assert data.get("message") in {
+        "Conversion failed",
+        "PDF was not generated. Verify that the input is a valid DOCX file.",
+    }
 
 
 def test__pdf_generated_successfully(temp_dir: str):

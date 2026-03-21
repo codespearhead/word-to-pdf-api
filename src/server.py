@@ -1,6 +1,6 @@
 import os
 from tempfile import NamedTemporaryFile
-from subprocess import check_output
+from subprocess import run
 from flask import Flask, request, jsonify, send_file
 
 app = Flask(__name__)
@@ -34,7 +34,7 @@ def upload_file():
         file.save(docx_file.name)
         docx_file.close()
 
-        check_output(
+        result = run(
             [
                 "libreoffice",
                 "--headless",
@@ -44,7 +44,22 @@ def upload_file():
                 BASE_DIR,
                 docx_file.name,
             ],
+            capture_output=True,
+            text=True,
+            check=True,
         )
+
+        if not os.path.exists(pdf_path):
+            return (
+                jsonify(
+                    {
+                        "message": "PDF was not generated. Verify that the input is a valid DOCX file.",
+                        "stdout": result.stdout,
+                        "stderr": result.stderr,
+                    }
+                ),
+                500,
+            )
 
         return send_file(
             pdf_path,
@@ -53,7 +68,7 @@ def upload_file():
         )
 
     except Exception as e:
-        return str(e)
+        return jsonify({"message": "Conversion failed", "error": str(e)}), 500
 
     finally:
         if os.path.exists(docx_file.name):
