@@ -12,37 +12,47 @@
 
 <br>
 
-## QuickStart
 
-> **Note**: You'll need to have the latest version of the [Docker Engine](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/) installed on your machine
+## Quickstart
 
-1. Clone the repository and cd into it:
+### Prerequisites
 
+1. Ensure you have the latest stable version of Docker Compose installed on your machine:
+
+```bash
+docker compose version
 ```
-git clone https://github.com/codespearhead/doc-to-file-api
-cd doc-to-file-api
-```
 
-2. Spin up the API 
+### Start the server
 
-> **Note**: The container will take a while to boot because "libreoffice" is a rather large dependency. Luckily, Flask's built-in web server will auto-reload the Flask app once changes are made to the server.py and saved, since the Flask app's running in debug mode.
+> **Note**: The initial build may take a while as LibreOffice is a large dependency. Subsequent builds and container starts will be near-instant due to Docker's layer caching.
 
-```
+```bash
 docker compose up
 ```
 
-3. Check if the API is working:
+### Check if the application is working
 
-3.1. (Automated testing)
+#### Via automated tests
+
+1. Install the test dependencies inside the running container:
 
 ```bash
-# 3.1.1 - Install test dependencies
 docker exec -it flask_api poetry install --with test
-# 3.1.2 - Run test suite
+```
+
+2. Run the test suite:
+
+```bash
 docker exec -it flask_api poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test
 ```
 
-3.2. (UI) Go to [http://localhost:5000/doc_to_pdf](http://localhost:5000/doc_to_pdf), select a local DOC or DOCX file, such as the one in ./test/dummy_doc.docx, then press `upload` and see whether a PDF file is either displayed on the browser or downloaded automatically.
+#### Via Web UI
+
+1. Navigate to [http://localhost:5000/doc_to_pdf](http://localhost:5000/doc_to_pdf).
+2. Select a local DOC or DOCX file (e.g. [dummy_doc.docx](./test/dummy_doc.docx)).
+3. Click the Upload button.
+4. Check that the resulting PDF either appears directly in the browser or starts downloading automatically.
 
 ## Dev mode
 
