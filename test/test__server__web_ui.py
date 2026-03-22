@@ -1,12 +1,14 @@
 import logging
 import os
 import shutil
-import zipfile
 import pytest
 from typing import Generator
 from _pytest.fixtures import FixtureRequest
 from playwright.sync_api import Page, expect
-from test.util import helper_function__assert_generated_pdf_matches_expected
+from test.util import (
+    helper_function__assert_generated_pdf_matches_expected,
+    helper_function__create_invalid_docx_file,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -57,12 +59,9 @@ def test__web_ui__invalid_file_in_request(
     page: Page,
     temp_dir: str,
 ) -> None:
-    invalid_file = os.path.join(temp_dir, "invalid.docx")
-
-    # [09301be5-a035-4d7f-82f3-f4502070da58]
-    with zipfile.ZipFile(invalid_file, "w") as zf:
-        zf.writestr("[Content_Types].xml", "")
-        zf.writestr("_rels/.rels", "")
+    invalid_file = helper_function__create_invalid_docx_file(
+        file_path=os.path.join(temp_dir, "invalid.docx"),
+    )
 
     page.goto(endpoint)
 
