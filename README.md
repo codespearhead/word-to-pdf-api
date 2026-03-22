@@ -54,9 +54,72 @@ docker exec -it flask_api poetry run pytest -rfsxE --capture=no --log-cli-level=
 3. Click the Upload button.
 4. Check that the resulting PDF either appears directly in the browser or starts downloading automatically.
 
+
 ## Dev mode
 
-TODO
+### Prerequisites
+
+1. Complete the Quickstart and ensure the server is already up and running.
+
+> **Note**: Since Flask is running in debug mode, the server will automatically reload whenever changes are saved to [server.py](./src/server.py).
+
+2. Ensure you have the latest stable version of Python installed:
+
+```bash
+python --version
+```
+
+### Local Environment Setup
+
+1. Create a Virtual Enviroment:
+
+```bash
+python -m venv .venv
+```
+
+2. Activate the Virtual Enviroment:
+
+```bash
+activate_venv() {
+    if [[ $(uname) == "Darwin" ]]; then
+        source .venv/bin/activate
+    elif [[ $(uname) == "Linux" ]]; then
+        source .venv/bin/activate
+    elif [[ $(uname) == CYGWIN* || $(uname) == MINGW* ]]; then
+        source .venv/Scripts/activate
+    else
+        echo "Unsupported operating system"
+    fi
+}
+
+activate_venv
+```
+
+3. Ensure the Virtual Enviroment is active:
+
+```bash
+PYTHON_PATH=$(which python)
+if [[ "$PYTHON_PATH" == *".venv"* ]]; then
+  echo "Python is using a .venv environment: $PYTHON_PATH"
+else
+  echo "Python is NOT using a .venv environment: $PYTHON_PATH"
+fi
+```
+
+4. Install the Poetry package manager:
+
+```bash
+pip install poetry
+```
+
+5. Install the project dependencies from all dependency groups:
+
+```bash
+poetry install --with test,format
+```
+
+6. The test and task commands will now run without the `docker exec -it flask_api` prefix.
+
 
 ## Useful commands
 
