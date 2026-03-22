@@ -1,13 +1,13 @@
 import os
 import shutil
 from typing import Generator
-import zipfile
 import pytest
 from _pytest.fixtures import FixtureRequest
 import requests
 
 from test.util import (
     helper_function__assert_generated_pdf_matches_expected,
+    helper_function__create_invalid_docx_file,
     helper_function__save_response_pdf,
 )
 
@@ -39,14 +39,11 @@ def test__api__missing_file_in_request():
 
 
 def test__api__invalid_file_in_request(temp_dir: str):
-    invalid_file = os.path.join(temp_dir, "invalid.docx")
+    invalid_file__path = helper_function__create_invalid_docx_file(
+        file_path=os.path.join(temp_dir, "invalid.docx"),
+    )
 
-    # [09301be5-a035-4d7f-82f3-f4502070da58] DOCX files are ZIP archives with a specific structure. This creates a fake DOCX (valid ZIP but missing required files), which reliably triggers a conversion failure.
-    with zipfile.ZipFile(invalid_file, "w") as zf:
-        zf.writestr("[Content_Types].xml", "")
-        zf.writestr("_rels/.rels", "")
-
-    with open(invalid_file, "rb") as f:
+    with open(invalid_file__path, "rb") as f:
         response = requests.post(endpoint, files={"file": f})
 
     assert response.status_code == 500

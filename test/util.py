@@ -2,10 +2,21 @@ import os
 from pathlib import Path
 from typing import List
 from typing import Tuple
+import zipfile
 import pypdfium2 as pdfium
 import requests
 from PIL import Image
 from pypdfium2._helpers.bitmap import PdfBitmap
+
+
+# [09301be5-a035-4d7f-82f3-f4502070da58] DOCX files are ZIP archives with a specific structure. This creates a fake DOCX (valid ZIP but missing required files), which reliably triggers a conversion failure.
+def helper_function__create_invalid_docx_file(
+    file_path: str,
+):
+    with zipfile.ZipFile(file_path, "w") as zf:
+        zf.writestr("[Content_Types].xml", "")
+        zf.writestr("_rels/.rels", "")
+    return file_path
 
 
 def helper_function__render_pdf_pages(
