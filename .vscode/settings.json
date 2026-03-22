@@ -2,5 +2,7 @@
   "files.exclude": {
     "**/__pycache__": true,
     "**/__pycache__.*": true
-  }
+  },
+  "python.terminal.activateEnvironment": false,
+  "python.defaultInterpreterPath": ".venv",
 }
