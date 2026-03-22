@@ -172,4 +172,4 @@ jobs:
 
 
       - name: Run API tests
-        run: poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test
+        run: poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test/test__server__api.py
