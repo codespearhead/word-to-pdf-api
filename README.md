@@ -123,9 +123,16 @@ poetry install --with test,format
 
 ## Useful commands
 
-1. Format code:
+#### Code Formatting
+
+1. Install the required dependencies inside the running container:
 
 ```bash
 docker exec -it flask_api poetry install --with format
+```
+
+2. Run the formatting task:
+
+```bash
 docker exec -it flask_api poetry run python ./tasks/format.py
 ```
