@@ -61,6 +61,7 @@ jobs:
             ~/.local/pipx
             ~/.cache/pypoetry
             ~/.cache/pip
+            ~/.cache/ms-playwright
           key: setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
@@ -141,6 +142,7 @@ jobs:
             ~/.local/pipx
             ~/.cache/pypoetry
             ~/.cache/pip
+            ~/.cache/ms-playwright
           key: setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
