@@ -173,3 +173,17 @@ jobs:
 
       - name: Run API tests
         run: poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test/test__server__api.py
+
+
+      - name: Install Playwright browser
+        run: |
+          poetry run playwright install --with-deps chromium
+
+      - name: Run Web UI tests
+        run: poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 --tracing=retain-on-failure ./test/test__server__web_ui.py
+
+      - uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() && hashFiles('test-results/**') != '' }}
+        with:
+          name: playwright-traces
+          path: test-results/
