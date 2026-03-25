@@ -68,7 +68,6 @@ jobs:
             ~/.local/pipx
             ~/.cache/pypoetry
             ~/.cache/pip
-            ~/.cache/ms-playwright
           key: setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
@@ -149,7 +148,6 @@ jobs:
             ~/.local/pipx
             ~/.cache/pypoetry
             ~/.cache/pip
-            ~/.cache/ms-playwright
           key: setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-${{ env.POETRY_VERSION }}-${{ hashFiles('**/poetry.lock') }}
           restore-keys: |
             setup-${{ runner.os }}-${{ env.PYTHON_VERSION }}-
@@ -183,9 +181,17 @@ jobs:
       - name: Run API tests
         run: poetry run pytest -rfsxE --capture=no --log-cli-level=DEBUG --maxfail=1 ./test/test__server__api.py
 
+      - name: Cache Playwright browsers
+        id: cache-playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
 
       - name: Install Playwright browser
+        if: steps.cache-playwright.outputs.cache-hit != 'true'
         run: |
+          source .venv/bin/activate
           poetry run playwright install --with-deps chromium
 
       - name: Run Web UI tests
